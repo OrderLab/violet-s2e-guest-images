@@ -28,7 +28,8 @@ S2E_INSTALL_ROOT ?=
 S2E_LINUX_KERNELS_ROOT ?=
 
 # Comment out this variable to enable graphic output
-GRAPHICS ?= -nographic -monitor null
+# -nographic
+GRAPHICS ?=  -monitor null
 
 # If your host does not support KVM, comment out this variable.
 # Image creation will take much longer.

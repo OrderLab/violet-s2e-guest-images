@@ -52,6 +52,38 @@ install_systemtap() {
     cd ..
 }
 
+# Install mysql from source
+# Add for VIOLET project
+install_mysql() {
+ sudo apt-get -y install cmake vim libncurses-dev
+ wget -nc https://downloads.mysql.com/archives/mysql-5.5/mysql-5.5.59.tar.gz
+ git clone https://github.com/gongxini/mysql_configuration.git
+ tar -zxvf mysql-5.5.59.tar.gz
+ rm -rf 5.5.59/
+ mv mysql-5.5.59 5.5.59
+ cd ./5.5.59
+ mkdir ./build
+ cd ./build
+mkdir /home/s2e/software
+mkdir /home/s2e/software/mysql
+mkdir /home/s2e/software/mysql/5.5.59
+mkdir /home/s2e/software/mysql/5.5.59/data
+sleep 2
+cmake ..  -DCMAKE_INSTALL_PREFIX=/home/s2e/software/mysql/5.5.59 -DMYSQL_DATADIR=/home/s2e/software/mysql/5.5.59/data -DWITH_DEBUG=1 -DMYSQL_MAINTAINER_MODE=false
+
+make -j 4
+make install
+cd ../..
+cp mysql_configuration/my.cnf software/mysql/5.5.59/
+cd software/mysql/5.5.59
+scripts/mysql_install_db  --basedir=/home/s2e/software/mysql/5.5.59 --datadir=/home/s2e/software/mysql/5.5.59/data
+./bin/mysqld --defaults-file=my.cnf --one-thread &
+sleep 60
+./bin/mysqladmin -S mysqld.sock -u root shutdown
+cd ../../..
+}
+
+
 # Install kernels last, the cause downgrade of libc,
 # which will cause issues when installing other packages
 install_kernel() {
@@ -134,6 +166,7 @@ install_cgc_packages() {
 }
 
 sudo apt-get update
+install_mysql
 install_i386
 install_systemtap
 
