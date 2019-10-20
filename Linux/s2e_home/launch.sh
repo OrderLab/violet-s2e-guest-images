@@ -79,6 +79,10 @@ cd software/mysql/5.5.59
 scripts/mysql_install_db  --basedir=/home/s2e/software/mysql/5.5.59 --datadir=/home/s2e/software/mysql/5.5.59/data
 ./bin/mysqld --defaults-file=my.cnf --one-thread &
 sleep 60
+./bin/mysql -S mysqld.sock << EOF
+use test;
+CREATE TABLE tbl(id INT NOT NULL AUTO_INCREMENT,col INT NOT NULL, PRIMARY KEY (id)) Engine = InnoDB;
+EOF
 ./bin/mysqladmin -S mysqld.sock -u root shutdown
 cd ../../..
 }
