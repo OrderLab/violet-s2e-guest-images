@@ -54,6 +54,30 @@ install_systemtap() {
 
 # Install mysql from source
 # Add for VIOLET project
+install_postgresql() {
+ sudo apt-get -y install cmake vim libncurses-dev
+ wget -nc https://ftp.postgresql.org/pub/source/v11.0/postgresql-11.0.tar.gz
+ tar -zxvf postgresql-11.0.tar.gz
+ rm -rf 11.0/
+ mv postgresql-11.0 11.0
+ cd ./11.0
+ mkdir ./build
+ cd ./build
+ mkdir -p /home/s2e/software
+ mkdir /home/s2e/software/postgresql
+ mkdir /home/s2e/software/mysql/11.0
+ mkdir /home/s2e/software/mysql/11.0/data
+ sleep 2
+ ../configure --prefix=/home/s2e/software/postgresql/11.0
+ make -j 4
+ make install
+ cd ../..
+ cd software/postgresql/11.0
+ cd ../../..
+}
+
+# Install mysql from source
+# Add for VIOLET project
 install_mysql() {
  sudo apt-get -y install cmake vim libncurses-dev
  wget -nc https://downloads.mysql.com/archives/mysql-5.5/mysql-5.5.59.tar.gz
