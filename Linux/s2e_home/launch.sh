@@ -52,7 +52,7 @@ install_systemtap() {
     cd ..
 }
 
-# Install mysql from source
+# Install postgresql from source
 # Add for VIOLET project
 install_postgresql() {
  sudo apt-get -y install cmake vim libncurses-dev zlib1g-dev  libreadline-gplv2-dev
@@ -71,14 +71,18 @@ install_postgresql() {
  ../configure --prefix=/home/s2e/software/postgresql/11.0
  make -j 4
  make install
- cd ../..
- cd software/postgresql/11.0
- cd ../../..
+ cd ../.. 
+ rm -rf 11.0
+ rm -rf postgresql-11.0.tar.gz 
+#cd software/postgresql/11.0
+ #cd ../../..
 }
 
 # Install mysql from source
 # Add for VIOLET project
+#install_mysql
 install_mysql() {
+ sudo apt-get -y install cmake vim libncurses-dev zlib1g-dev  libreadline-gplv2-dev
  wget -nc https://downloads.mysql.com/archives/mysql-5.5/mysql-5.5.59.tar.gz
  git clone https://github.com/gongxini/mysql_configuration.git
  tar -zxvf mysql-5.5.59.tar.gz
@@ -87,52 +91,53 @@ install_mysql() {
  cd ./5.5.59
  mkdir ./build
  cd ./build
-mkdir -p /home/s2e/software
-mkdir /home/s2e/software/mysql
-mkdir /home/s2e/software/mysql/5.5.59
-mkdir /home/s2e/software/mysql/5.5.59/data
-sleep 2
-cmake ..  -DCMAKE_INSTALL_PREFIX=/home/s2e/software/mysql/5.5.59 -DMYSQL_DATADIR=/home/s2e/software/mysql/5.5.59/data -DWITH_DEBUG=1 -DMYSQL_MAINTAINER_MODE=false
+ mkdir /home/s2e/software/mysql
+ mkdir /home/s2e/software/mysql/5.5.59
+ mkdir /home/s2e/software/mysql/5.5.59/data
+ sleep 2
+ cmake ..  -DCMAKE_INSTALL_PREFIX=/home/s2e/software/mysql/5.5.59 -DMYSQL_DATADIR=/home/s2e/software/mysql/5.5.59/data -DWITH_DEBUG=1 -DMYSQL_MAINTAINER_MODE=false
 
-make -j 4
-make install
-cd ../..
-cp mysql_configuration/my.cnf software/mysql/5.5.59/
-cd software/mysql/5.5.59
-scripts/mysql_install_db  --basedir=/home/s2e/software/mysql/5.5.59 --datadir=/home/s2e/software/mysql/5.5.59/data
-./bin/mysqld --defaults-file=my.cnf --one-thread &
-sleep 60
-./bin/mysql -S mysqld.sock << EOF
-use test;
-CREATE TABLE tbl(id INT NOT NULL AUTO_INCREMENT,col INT NOT NULL, PRIMARY KEY (id)) Engine = InnoDB;
-INSERT INTO tbl(col) VALUES(11);
-INSERT INTO tbl(col) VALUES(12);
-INSERT INTO tbl(col) VALUES(13);
-INSERT INTO tbl(col) VALUES(14);
-INSERT INTO tbl(col) VALUES(15);
-INSERT INTO tbl(col) VALUES(16);
-INSERT INTO tbl(col) VALUES(17);
-INSERT INTO tbl(col) VALUES(18);
-INSERT INTO tbl(col) VALUES(19);
-INSERT INTO tbl(col) VALUES(20);
-INSERT INTO tbl(col) VALUES(21);
-INSERT INTO tbl(col) VALUES(22);
-INSERT INTO tbl(col) VALUES(23);
-INSERT INTO tbl(col) VALUES(24);
-INSERT INTO tbl(col) VALUES(25);
-INSERT INTO tbl(col) VALUES(26);
-INSERT INTO tbl(col) VALUES(27);
-INSERT INTO tbl(col) VALUES(28);
-INSERT INTO tbl(col) VALUES(29);
-INSERT INTO tbl(col) VALUES(30);
-CREATE TABLE tbl1(id INT NOT NULL AUTO_INCREMENT,col INT NOT NULL, PRIMARY KEY (id)) Engine = MyISAM;
-INSERT INTO tbl1(col) VALUES(31);
-INSERT INTO tbl1(col) VALUES(32);
-INSERT INTO tbl1(col) VALUES(33);
-INSERT INTO tbl1(col) VALUES(34);
-EOF
-./bin/mysqladmin -S mysqld.sock -u root shutdown
-cd ../../..
+ make -j 4
+ make install
+ cd ../..
+ rm -rf mysql-5.5.59.tar.gz
+ rm -rf 5.5.59
+ cp mysql_configuration/my.cnf software/mysql/5.5.59/
+ cd software/mysql/5.5.59
+ scripts/mysql_install_db  --basedir=/home/s2e/software/mysql/5.5.59 --datadir=/home/s2e/software/mysql/5.5.59/data
+ ./bin/mysqld --defaults-file=my.cnf --one-thread &
+ sleep 60
+ ./bin/mysql -S mysqld.sock << EOF
+ use test;
+ CREATE TABLE tbl(id INT NOT NULL AUTO_INCREMENT,col INT NOT NULL, PRIMARY KEY (id)) Engine = InnoDB;
+ INSERT INTO tbl(col) VALUES(11);
+ INSERT INTO tbl(col) VALUES(12);
+ INSERT INTO tbl(col) VALUES(13);
+ INSERT INTO tbl(col) VALUES(14);
+ INSERT INTO tbl(col) VALUES(15);
+ INSERT INTO tbl(col) VALUES(16);
+ INSERT INTO tbl(col) VALUES(17);
+ INSERT INTO tbl(col) VALUES(18);
+ INSERT INTO tbl(col) VALUES(19);
+ INSERT INTO tbl(col) VALUES(20);
+ INSERT INTO tbl(col) VALUES(21);
+ INSERT INTO tbl(col) VALUES(22);
+ INSERT INTO tbl(col) VALUES(23);
+ INSERT INTO tbl(col) VALUES(24);
+ INSERT INTO tbl(col) VALUES(25);
+ INSERT INTO tbl(col) VALUES(26);
+ INSERT INTO tbl(col) VALUES(27);
+ INSERT INTO tbl(col) VALUES(28);
+ INSERT INTO tbl(col) VALUES(29);
+ INSERT INTO tbl(col) VALUES(30);
+ CREATE TABLE tbl1(id INT NOT NULL AUTO_INCREMENT,col INT NOT NULL, PRIMARY KEY (id)) Engine = MyISAM;
+ INSERT INTO tbl1(col) VALUES(31);
+ INSERT INTO tbl1(col) VALUES(32);
+ INSERT INTO tbl1(col) VALUES(33);
+ INSERT INTO tbl1(col) VALUES(34);
+ EOF
+ ./bin/mysqladmin -S mysqld.sock -u root shutdown
+ cd ../../..
 }
 
 
@@ -218,8 +223,6 @@ install_cgc_packages() {
 }
 
 sudo apt-get update
-install_postgresql
-install_mysql
 install_i386
 install_systemtap
 
@@ -229,6 +232,8 @@ if [ $(has_cgc_kernel) -eq 1 ]; then
     install_cgc_packages
 fi
 
+install_postgresql
+install_mysql
 install_kernel
 
 # QEMU will stop (-no-reboot)
