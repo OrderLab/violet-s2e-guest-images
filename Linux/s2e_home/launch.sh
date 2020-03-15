@@ -72,8 +72,6 @@ install_postgresql() {
  make -j 4
  make install
  cd ../.. 
- rm -rf 11.0
- rm -rf postgresql-11.0.tar.gz 
 #cd software/postgresql/11.0
  #cd ../../..
 }
@@ -82,7 +80,6 @@ install_postgresql() {
 # Add for VIOLET project
 #install_mysql
 install_mysql() {
- sudo apt-get -y install cmake vim libncurses-dev zlib1g-dev  libreadline-gplv2-dev
  wget -nc https://downloads.mysql.com/archives/mysql-5.5/mysql-5.5.59.tar.gz
  git clone https://github.com/gongxini/mysql_configuration.git
  tar -zxvf mysql-5.5.59.tar.gz
@@ -100,8 +97,6 @@ install_mysql() {
  make -j 4
  make install
  cd ../..
- rm -rf mysql-5.5.59.tar.gz
- rm -rf 5.5.59
  cp mysql_configuration/my.cnf software/mysql/5.5.59/
  cd software/mysql/5.5.59
  scripts/mysql_install_db  --basedir=/home/s2e/software/mysql/5.5.59 --datadir=/home/s2e/software/mysql/5.5.59/data
@@ -135,7 +130,7 @@ install_mysql() {
  INSERT INTO tbl1(col) VALUES(32);
  INSERT INTO tbl1(col) VALUES(33);
  INSERT INTO tbl1(col) VALUES(34);
- EOF
+EOF
  ./bin/mysqladmin -S mysqld.sock -u root shutdown
  cd ../../..
 }
@@ -223,6 +218,8 @@ install_cgc_packages() {
 }
 
 sudo apt-get update
+install_postgresql
+install_mysql
 install_i386
 install_systemtap
 
@@ -232,8 +229,6 @@ if [ $(has_cgc_kernel) -eq 1 ]; then
     install_cgc_packages
 fi
 
-install_postgresql
-install_mysql
 install_kernel
 
 # QEMU will stop (-no-reboot)
