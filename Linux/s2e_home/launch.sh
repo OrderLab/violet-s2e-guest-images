@@ -63,17 +63,15 @@ install_postgresql() {
  cd ./11.0
  mkdir ./build
  cd ./build
- mkdir -p /home/s2e/software
- mkdir /home/s2e/software/postgresql
- mkdir /home/s2e/software/postgresql/11.0
- mkdir /home/s2e/software/postgresql/11.0/data
+ mkdir -p /home/s2e/software/postgresql/11.0/data
  sleep 2
  ../configure --prefix=/home/s2e/software/postgresql/11.0
  make -j 4
  make install
  cd ../.. 
-#cd software/postgresql/11.0
- #cd ../../..
+ cd software/postgresql/11.0
+ ./bin/initdb -D /home/s2e/software/postgresql/11.0/data
+ cd ../../..
 }
 
 # Install mysql from source
@@ -88,9 +86,7 @@ install_mysql() {
  cd ./5.5.59
  mkdir ./build
  cd ./build
- mkdir /home/s2e/software/mysql
- mkdir /home/s2e/software/mysql/5.5.59
- mkdir /home/s2e/software/mysql/5.5.59/data
+ mkdir -p /home/s2e/software/mysql/5.5.59/data
  sleep 2
  cmake ..  -DCMAKE_INSTALL_PREFIX=/home/s2e/software/mysql/5.5.59 -DMYSQL_DATADIR=/home/s2e/software/mysql/5.5.59/data -DWITH_DEBUG=1 -DMYSQL_MAINTAINER_MODE=false
 
@@ -132,7 +128,7 @@ install_mysql() {
  INSERT INTO tbl1(col) VALUES(34);
 EOF
  ./bin/mysqladmin -S mysqld.sock -u root shutdown
- cd ../../..
+ cd /home/s2e
 }
 
 
@@ -221,7 +217,7 @@ sudo apt-get update
 install_postgresql
 install_mysql
 install_i386
-install_systemtap
+# install_systemtap
 
 # Install CGC tools if we have a CGC kernel
 if [ $(has_cgc_kernel) -eq 1 ]; then
