@@ -93,7 +93,6 @@ install_postgresql() {
  insert into event_types select generate_series(1,1000) as key, (random()*(10^3))::integer;
  insert into prop_keys select generate_series(1,10000) as key, (random()*(10^3))::integer, 'app_A';
 EOF
-
 ./bin/pg_ctl -D data stop
 cd ../../..
 }
@@ -110,9 +109,7 @@ install_mysql() {
  cd ./5.5.59
  mkdir ./build
  cd ./build
- mkdir /home/s2e/software/mysql
- mkdir /home/s2e/software/mysql/5.5.59
- mkdir /home/s2e/software/mysql/5.5.59/data
+ mkdir -p /home/s2e/software/mysql/5.5.59/data
  sleep 2
  cmake ..  -DCMAKE_INSTALL_PREFIX=/home/s2e/software/mysql/5.5.59 -DMYSQL_DATADIR=/home/s2e/software/mysql/5.5.59/data -DWITH_DEBUG=1 -DMYSQL_MAINTAINER_MODE=false
 
@@ -154,7 +151,7 @@ install_mysql() {
  INSERT INTO tbl1(col) VALUES(34);
 EOF
  ./bin/mysqladmin -S mysqld.sock -u root shutdown
- cd ../../..
+ cd /home/s2e
 }
 
 
@@ -243,7 +240,7 @@ sudo apt-get update
 install_postgresql
 install_mysql
 install_i386
-install_systemtap
+# install_systemtap
 
 # Install CGC tools if we have a CGC kernel
 if [ $(has_cgc_kernel) -eq 1 ]; then
