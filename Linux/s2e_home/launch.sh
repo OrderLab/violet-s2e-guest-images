@@ -66,14 +66,36 @@ install_postgresql() {
  mkdir -p /home/s2e/software
  mkdir /home/s2e/software/postgresql
  mkdir /home/s2e/software/postgresql/11.0
- mkdir /home/s2e/software/postgresql/11.0/data
  sleep 2
- ../configure --prefix=/home/s2e/software/postgresql/11.0
+../configure --prefix=/home/s2e/software/postgresql/11.0 --enable-depend --enable-cassert --enable-debug CFLAGS="-ggdb -O0"
  make -j 4
  make install
  cd ../.. 
-#cd software/postgresql/11.0
- #cd ../../..
+ cd software/postgresql/11.0
+ ./bin/initdb -D data
+ ./bin/postgres --config-file=data/postgresql.conf -D data/ &
+ sleep 10 
+ ./bin/createdb test
+ ./bin/psql test << EOF
+ CREATE TABLE tbl(id SERIAL,col INT NOT NULL, PRIMARY KEY (id));
+ INSERT INTO tbl(col) VALUES(1);
+ INSERT INTO tbl(col) VALUES(2);
+ INSERT INTO tbl(col) VALUES(3);
+ INSERT INTO tbl(col) VALUES(4);
+ INSERT INTO tbl(col) VALUES(5);
+ INSERT INTO tbl(col) VALUES(6);
+ INSERT INTO tbl(col) VALUES(7);
+ INSERT INTO tbl(col) VALUES(8);
+ INSERT INTO tbl(col) VALUES(9);
+ INSERT INTO tbl(col) VALUES(10);
+ create TABLE event_types(id int primary key,col2 int);
+ create TABLE prop_keys(id int primary key,col1 int, app varchar(10));
+ insert into event_types select generate_series(1,1000) as key, (random()*(10^3))::integer;
+ insert into prop_keys select generate_series(1,10000) as key, (random()*(10^3))::integer, 'app_A';
+EOF
+
+./bin/pg_ctl -D data stop
+cd ../../..
 }
 
 # Install mysql from source
