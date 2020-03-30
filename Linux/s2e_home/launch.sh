@@ -100,7 +100,7 @@ cd ../../..
 # Install apache from source
 # Add for VIOLET project
 install_apache() {
- sudo apt-get -y install libapr1-dev libaprutil1-dev libpcre3-dev
+ sudo apt-get -y install libapr1-dev libaprutil1-dev libpcre3-dev liblua5.3-dev
  wget -nc https://archive.apache.org/dist/httpd/httpd-2.4.38.tar.gz
  tar -zxvf httpd-2.4.38.tar.gz
  mv httpd-2.4.38  2.4
