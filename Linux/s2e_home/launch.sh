@@ -97,6 +97,24 @@ EOF
 cd ../../..
 }
 
+# Install apache from source
+# Add for VIOLET project
+install_apache() {
+ wget -nc https://archive.apache.org/dist/httpd/httpd-2.4.38.tar.gz
+ tar -zxvf httpd-2.4.38.tar.gz
+ mv httpd-2.4.38  2.4
+ cd 2.4
+ mkdir ./build-debug
+ cd ./build-debug
+ mkdir /home/s2e/software/httpd
+ mkdir /home/s2e/software/httpd/2.4
+ sleep 2
+ CFLAGS="-O0" ../configure --prefix=/home/s2e/software/httpd/2.4 --enable-ldap=shared --enable-lua=shared 
+ make -j 4
+ make install
+ cd ../.. 
+}
+
 # Install mysql from source
 # Add for VIOLET project
 #install_mysql
@@ -240,6 +258,7 @@ sudo apt-get update
 install_postgresql
 install_mysql
 install_i386
+install_apache 
 # install_systemtap
 
 # Install CGC tools if we have a CGC kernel
