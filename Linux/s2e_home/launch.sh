@@ -100,6 +100,7 @@ cd ../../..
 # Install apache from source
 # Add for VIOLET project
 install_apache() {
+ sudo apt install libapr1-dev libaprutil1-dev libpcre3-dev
  wget -nc https://archive.apache.org/dist/httpd/httpd-2.4.38.tar.gz
  tar -zxvf httpd-2.4.38.tar.gz
  mv httpd-2.4.38  2.4
@@ -127,6 +128,7 @@ install_mysql() {
  cd ./5.5.59
  mkdir ./build
  cd ./build
+ mkdir /home/s2e/software/mysql
  mkdir -p /home/s2e/software/mysql/5.5.59/data
  sleep 2
  cmake ..  -DCMAKE_INSTALL_PREFIX=/home/s2e/software/mysql/5.5.59 -DMYSQL_DATADIR=/home/s2e/software/mysql/5.5.59/data -DWITH_DEBUG=1 -DMYSQL_MAINTAINER_MODE=false
