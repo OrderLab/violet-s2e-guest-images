@@ -88,10 +88,16 @@ install_postgresql() {
  INSERT INTO tbl(col) VALUES(8);
  INSERT INTO tbl(col) VALUES(9);
  INSERT INTO tbl(col) VALUES(10);
- create TABLE event_types(id int primary key,col2 int);
- create TABLE prop_keys(id int primary key,col1 int, app varchar(10));
- insert into event_types select generate_series(1,1000) as key, (random()*(10^3))::integer;
- insert into prop_keys select generate_series(1,10000) as key, (random()*(10^3))::integer, 'app_A';
+ create TABLE violet_B(id int primary key,col2 int, app varchar(20), text varchar(50),school varchar(10));
+ insert into violet_B select generate_series(1,1000) as key, (random()*(10^4))::integer, 'app_A',random()::varchar(50),random()::varchar(10);
+ insert into violet_B select generate_series(1001,20000) as key, (random()*(10^4))::integer, 'app_B',random()::varchar(50),random()::varchar(10);
+ insert into violet_B select generate_series(20001,21000) as key, (random()*(10^4))::integer, 'app_A',random()::varchar(50),random()::varchar(10);
+ insert into violet_B select generate_series(21001,40000) as key, (random()*(10^4))::integer, 'app_B',random()::varchar(50),random()::varchar(10);
+ insert into violet_B select generate_series(41001,42000) as key, (random()*(10^4))::integer, 'app_A',random()::varchar(50),random()::varchar(10);
+ insert into violet_B select generate_series(42001,100000) as key, (random()*(10^4))::integer, 'app_B',random()::varchar(50),random()::varchar(10);
+ insert into violet_B select generate_series(100001,200000) as key, (random()*(10^4))::integer, random()::varchar(20),random()::varchar(50),random()::varchar(10);
+ create TABLE violet_A(id int primary key,event_id int, phone varchar(10), name varchar(22));
+ insert into violet_A select generate_series(1,100000) as key, (random()*(10^5))::integer,random()::varchar(10), random()::varchar(20);
 EOF
 ./bin/pg_ctl -D data stop
 cd ../../..
