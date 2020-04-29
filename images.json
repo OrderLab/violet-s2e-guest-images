@@ -17,7 +17,8 @@
       },
       "hw": {
         "default_disk_size": "8G",
-        "default_snapshot_size": "256M",
+        "max_memory_size": "8G",
+        "default_snapshot_size": "512M",
         "nic": "e1000"
       }
     },
@@ -39,6 +40,7 @@
       },
       "hw": {
         "default_disk_size": "8G",
+        "max_memory_size": "8G",
         "default_snapshot_size": "256M",
         "nic": "e1000"
       }
@@ -61,6 +63,7 @@
       },
       "hw": {
         "default_disk_size": "16G",
+        "max_memory_size": "8G",
         "default_snapshot_size": "8G",
         "nic": "e1000"
       }
@@ -85,6 +88,7 @@
       },
       "hw": {
         "default_disk_size": "8G",
+        "max_memory_size": "8G",
         "default_snapshot_size": "256M",
         "nic": "pcnet"
       }
@@ -109,6 +113,7 @@
       },
       "hw": {
         "default_disk_size": "20G",
+        "max_memory_size": "8G",
         "default_snapshot_size": "2G",
         "nic": "e1000"
       }
@@ -133,6 +138,7 @@
       },
       "hw": {
         "default_disk_size": "20G",
+        "max_memory_size": "8G",
         "default_snapshot_size": "2G",
         "nic": "e1000"
       }
@@ -157,6 +163,7 @@
       },
       "hw": {
         "default_disk_size": "20G",
+        "max_memory_size": "8G",
         "default_snapshot_size": "2G",
         "nic": "e1000"
       }
@@ -180,6 +187,7 @@
       },
       "hw": {
         "default_disk_size": "20G",
+        "max_memory_size": "8G",
         "default_snapshot_size": "2G",
         "nic": "e1000",
         "cpu": "core2duo"
