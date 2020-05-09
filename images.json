@@ -64,7 +64,7 @@
       "hw": {
         "default_disk_size": "16G",
         "max_memory_size": "8G",
-        "default_snapshot_size": "8G",
+        "default_snapshot_size": "4G",
         "nic": "e1000"
       }
     },
