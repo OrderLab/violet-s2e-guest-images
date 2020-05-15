@@ -113,16 +113,43 @@ install_apache() {
  wget -nc https://archive.apache.org/dist/httpd/httpd-2.4.38.tar.gz
  tar -zxvf httpd-2.4.38.tar.gz
  mv httpd-2.4.38  2.4
+ wget -nc http://mirrors.gigenet.com/apache//apr/apr-1.6.5.tar.gz
+ tar -zxvf apr-1.6.5.tar.gz
+ cd apr-1.6.5
+ ./configure --prefix=/home/s2e/software/apr
+ make 
+ make install
+ cd ..
+ wget -nc http://mirrors.gigenet.com/apache//apr/apr-util-1.6.1.tar.gz
+ tar -zxvf apr-util-1.6.1.tar.gz
+ cd apr-util-1.6.1
+ ./configure --prefix=/home/s2e/software/apr-util --with-apr=/home/s2e/software/apr
+ make 
+ make install
+ cd ..
+ wget -nc https://ftp.pcre.org/pub/pcre/pcre-8.42.tar.gz
+ tar -zxvf pcre-8.42.tar.gz
+ cd pcre-8.42
+ ./configure --prefix=/home/s2e/software/pcre --disable-shared --with-pic 
+ make 
+ make install
+ cd ..
  cd 2.4
  mkdir ./build-debug
  cd ./build-debug
  mkdir /home/s2e/software/httpd
  mkdir /home/s2e/software/httpd/2.4
  sleep 2
- CFLAGS="-O0" ../configure --prefix=/home/s2e/software/httpd/2.4 --enable-ldap=shared --enable-lua=shared 
+ CFLAGS="-O0" ../configure --prefix=/home/s2e/software/httpd/2.4 --with-apr=/home/s2e/software/apr --with-apr-util=/home/s2e/software/apr-util --with-pcre=/home/s2e/software/pcre
  make -j 4
  make install
- cd ../.. 
+ cd ../..
+ cd software/httpd/2.4
+ cp /home/s2e/mysql_configuration/httpd.conf conf/
+ ./bin/httpd -k start &
+ sleep 2
+ ./bin/httpd -k stop
+ cd /home/s2e 
 }
 
 # Install mysql from source
