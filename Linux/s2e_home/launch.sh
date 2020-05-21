@@ -55,6 +55,19 @@ install_systemtap() {
     cd ..
 }
 
+install_squid() {
+ wget -nc http://www.squid-cache.org/Versions/v4/squid-4.1.tar.xz
+ tar -xvf squid-4.1.tar.xz
+ cd squid-4.1
+ mkdir build
+ cd build
+ ../configure --prefix=/home/s2e/software/squid/4.1 --disable-arch-native
+ make -j2
+ make install
+ cd ../..
+}
+
+
 # Install postgresql from source
 # Add for VIOLET project
 install_postgresql() {
@@ -298,7 +311,7 @@ install_mysql
 install_i386
 install_apache 
 # install_systemtap
-
+install_squid
 # Install CGC tools if we have a CGC kernel
 if [ $(has_cgc_kernel) -eq 1 ]; then
     install_apt_packages
