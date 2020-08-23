@@ -224,6 +224,63 @@ EOF
 }
 
 
+# Install mysql from source
+# Add for VIOLET project
+#install_mysql
+install_mysql_8() {
+ sudo apt-get -y install libssl-dev pkg-config
+ wget -nc https://downloads.mysql.com/archives/mysql-8.0/mysql-8.0.16.tar.gz 
+ tar -zxvf mysql-8.0.16.tar.gz
+ rm -rf 8.0.16/
+ mv mysql-8.0.16 8.0.16
+ cd ./8.0.16
+ mkdir ./build
+ cd ./build
+ mkdir /home/s2e/software/mysql
+ mkdir -p /home/s2e/software/mysql/8.0.16/data
+ sleep 2
+  cmake .. -DCMAKE_INSTALL_PREFIX=/home/s2e/software/mysql/8.0.16 -DMYSQL_DATADIR=/home/s2e/software/mysql/8.0.16/data -DSYSCONFDIR=/home/s2e/software/mysql/8.0.16/etc  -DDOWNLOAD_BOOST=1 -DWITH_BOOST=../boost
+ make -j 4
+ make install
+ cd ../..
+ cp mysql_configuration/my.cnf software/mysql/8.0.16/
+ cd software/mysql/8.0.16
+ ./mysqld --initialize --datadir=/home/s2e/software/mysql/8.0.16/data/ --basedir=/home/s2e/software/mysql/8.0.16
+ ./bin/mysqld --defaults-file=my.cnf  &
+ sleep 20
+ ./bin/mysql -S mysqld.sock << EOF
+ use test;
+ CREATE TABLE tbl(id INT NOT NULL AUTO_INCREMENT,col INT NOT NULL, PRIMARY KEY (id)) Engine = InnoDB;
+ INSERT INTO tbl(col) VALUES(11);
+ INSERT INTO tbl(col) VALUES(12);
+ INSERT INTO tbl(col) VALUES(13);
+ INSERT INTO tbl(col) VALUES(14);
+ INSERT INTO tbl(col) VALUES(15);
+ INSERT INTO tbl(col) VALUES(16);
+ INSERT INTO tbl(col) VALUES(17);
+ INSERT INTO tbl(col) VALUES(18);
+ INSERT INTO tbl(col) VALUES(19);
+ INSERT INTO tbl(col) VALUES(20);
+ INSERT INTO tbl(col) VALUES(21);
+ INSERT INTO tbl(col) VALUES(22);
+ INSERT INTO tbl(col) VALUES(23);
+ INSERT INTO tbl(col) VALUES(24);
+ INSERT INTO tbl(col) VALUES(25);
+ INSERT INTO tbl(col) VALUES(26);
+ INSERT INTO tbl(col) VALUES(27);
+ INSERT INTO tbl(col) VALUES(28);
+ INSERT INTO tbl(col) VALUES(29);
+ INSERT INTO tbl(col) VALUES(30);
+ CREATE TABLE tbl1(id INT NOT NULL AUTO_INCREMENT,col INT NOT NULL, PRIMARY KEY (id)) Engine = MyISAM;
+ INSERT INTO tbl1(col) VALUES(31);
+ INSERT INTO tbl1(col) VALUES(32);
+ INSERT INTO tbl1(col) VALUES(33);
+ INSERT INTO tbl1(col) VALUES(34);
+EOF
+ ./bin/mysqladmin -S mysqld.sock -u root shutdown
+ cd /home/s2e
+}
+
 # Install kernels last, the cause downgrade of libc,
 # which will cause issues when installing other packages
 install_kernel() {
@@ -307,17 +364,17 @@ install_cgc_packages() {
 
 sudo apt-get update
 install_postgresql
+install_mysql_8
 install_mysql
 install_i386
 install_apache 
-# install_systemtap
+install_systemtap
 install_squid
 # Install CGC tools if we have a CGC kernel
 if [ $(has_cgc_kernel) -eq 1 ]; then
     install_apt_packages
     install_cgc_packages
 fi
-
 install_kernel
 
 # QEMU will stop (-no-reboot)
