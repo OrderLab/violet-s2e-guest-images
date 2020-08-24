@@ -170,7 +170,6 @@ install_apache() {
 #install_mysql
 install_mysql() {
  wget -nc https://downloads.mysql.com/archives/mysql-5.5/mysql-5.5.59.tar.gz
- git clone https://github.com/gongxini/mysql_configuration.git
  tar -zxvf mysql-5.5.59.tar.gz
  rm -rf 5.5.59/
  mv mysql-5.5.59 5.5.59
@@ -228,14 +227,16 @@ EOF
 # Add for VIOLET project
 #install_mysql
 install_mysql_8() {
- sudo apt-get -y install libssl-dev pkg-config
+ sudo apt-get -y install cmake vim libssl-dev pkg-config libncurses-dev zlib1g-dev  libreadline-gplv2-dev
  wget -nc https://downloads.mysql.com/archives/mysql-8.0/mysql-8.0.16.tar.gz 
+ git clone https://github.com/gongxini/mysql_configuration.git
  tar -zxvf mysql-8.0.16.tar.gz
  rm -rf 8.0.16/
  mv mysql-8.0.16 8.0.16
  cd ./8.0.16
  mkdir ./build
  cd ./build
+ mkdir /home/s2e/software
  mkdir /home/s2e/software/mysql
  mkdir -p /home/s2e/software/mysql/8.0.16/data
  sleep 2
@@ -243,12 +244,13 @@ install_mysql_8() {
  make -j 4
  make install
  cd ../..
- cp mysql_configuration/my.cnf software/mysql/8.0.16/
+ cp mysql_configuration/my-8.0.cnf software/mysql/8.0.16/my.cnf
  cd software/mysql/8.0.16
- ./mysqld --initialize --datadir=/home/s2e/software/mysql/8.0.16/data/ --basedir=/home/s2e/software/mysql/8.0.16
+ ./bin/mysqld --initialize --datadir=/home/s2e/software/mysql/8.0.16/data/ --basedir=/home/s2e/software/mysql/8.0.16
  ./bin/mysqld --defaults-file=my.cnf  &
  sleep 20
  ./bin/mysql -S mysqld.sock << EOF
+ create database test;
  use test;
  CREATE TABLE tbl(id INT NOT NULL AUTO_INCREMENT,col INT NOT NULL, PRIMARY KEY (id)) Engine = InnoDB;
  INSERT INTO tbl(col) VALUES(11);
@@ -363,12 +365,12 @@ install_cgc_packages() {
 }
 
 sudo apt-get update
-install_postgresql
 install_mysql_8
+install_postgresql
 install_mysql
 install_i386
 install_apache 
-install_systemtap
+#install_systemtap
 install_squid
 # Install CGC tools if we have a CGC kernel
 if [ $(has_cgc_kernel) -eq 1 ]; then
