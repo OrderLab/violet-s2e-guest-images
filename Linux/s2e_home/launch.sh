@@ -365,7 +365,7 @@ install_cgc_packages() {
 }
 
 sudo apt-get update
-install_mysql_8
+# install_mysql_8
 install_postgresql
 install_mysql
 install_i386
