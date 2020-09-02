@@ -56,6 +56,7 @@ install_systemtap() {
 }
 
 install_squid() {
+ cd /home/s2e
  wget -nc http://www.squid-cache.org/Versions/v4/squid-4.1.tar.xz
  tar -xvf squid-4.1.tar.xz
  cd squid-4.1
@@ -64,7 +65,9 @@ install_squid() {
  ../configure --prefix=/home/s2e/software/squid/4.1 --disable-arch-native
  make -j2
  make install
- cd ../..
+ cd /home/s2e
+ # Delete source and build directory to save space
+ rm -rf squid-4.1
 }
 
 
@@ -72,6 +75,7 @@ install_squid() {
 # Add for VIOLET project
 install_postgresql() {
  sudo apt-get -y install cmake vim libncurses-dev zlib1g-dev  libreadline-gplv2-dev
+ cd /home/s2e
  wget -nc https://ftp.postgresql.org/pub/source/v11.0/postgresql-11.0.tar.gz
  tar -zxvf postgresql-11.0.tar.gz
  rm -rf 11.0/
@@ -79,9 +83,7 @@ install_postgresql() {
  cd ./11.0
  mkdir ./build
  cd ./build
- mkdir -p /home/s2e/software
- mkdir /home/s2e/software/postgresql
- mkdir /home/s2e/software/postgresql/11.0
+ mkdir -p /home/s2e/software/postgresql/11.0
  sleep 2
 ../configure --prefix=/home/s2e/software/postgresql/11.0 --enable-depend --enable-cassert --enable-debug CFLAGS="-ggdb -O0"
  make -j 4
@@ -115,14 +117,17 @@ install_postgresql() {
  create TABLE violet_A(id int primary key,event_id int, phone varchar(10), name varchar(22));
  insert into violet_A select generate_series(1,100000) as key, (random()*(10^5))::integer,random()::varchar(10), random()::varchar(20);
 EOF
-./bin/pg_ctl -D data stop
-cd ../../..
+ ./bin/pg_ctl -D data stop
+ cd /home/s2e
+ # Delete source and build directory to save space
+ rm -rf 11.0
 }
 
 # Install apache from source
 # Add for VIOLET project
 install_apache() {
  sudo apt-get -y install libapr1-dev libaprutil1-dev libpcre3-dev liblua5.3-dev
+ cd /home/s2e
  wget -nc https://archive.apache.org/dist/httpd/httpd-2.4.38.tar.gz
  tar -zxvf httpd-2.4.38.tar.gz
  mv httpd-2.4.38  2.4
@@ -150,8 +155,7 @@ install_apache() {
  cd 2.4
  mkdir ./build-debug
  cd ./build-debug
- mkdir /home/s2e/software/httpd
- mkdir /home/s2e/software/httpd/2.4
+ mkdir -p /home/s2e/software/httpd/2.4
  sleep 2
  CFLAGS="-O0" ../configure --prefix=/home/s2e/software/httpd/2.4 --with-apr=/home/s2e/software/apr --with-apr-util=/home/s2e/software/apr-util --with-pcre=/home/s2e/software/pcre
  make -j 4
@@ -163,12 +167,19 @@ install_apache() {
  sleep 2
  ./bin/httpd -k stop
  cd /home/s2e 
+ # Delete source and build directory to save space
+ rm -rf 2.4 apr-1.6.5 apr-util-1.6.1 pcre-8.42
 }
 
 # Install mysql from source
 # Add for VIOLET project
 #install_mysql
 install_mysql() {
+ sudo apt-get -y install cmake vim libncurses-dev zlib1g-dev libreadline-gplv2-dev
+ cd /home/s2e
+ if [ ! -d mysql_configuration ]; then
+   git clone https://github.com/gongxini/mysql_configuration.git
+ fi
  wget -nc https://downloads.mysql.com/archives/mysql-5.5/mysql-5.5.59.tar.gz
  tar -zxvf mysql-5.5.59.tar.gz
  rm -rf 5.5.59/
@@ -176,11 +187,9 @@ install_mysql() {
  cd ./5.5.59
  mkdir ./build
  cd ./build
- mkdir /home/s2e/software/mysql
  mkdir -p /home/s2e/software/mysql/5.5.59/data
  sleep 2
  cmake ..  -DCMAKE_INSTALL_PREFIX=/home/s2e/software/mysql/5.5.59 -DMYSQL_DATADIR=/home/s2e/software/mysql/5.5.59/data -DWITH_DEBUG=1 -DMYSQL_MAINTAINER_MODE=false
-
  make -j 4
  make install
  cd ../..
@@ -220,24 +229,25 @@ install_mysql() {
 EOF
  ./bin/mysqladmin -S mysqld.sock -u root shutdown
  cd /home/s2e
+ # Delete build and source directory to save space
+ rm -rf 5.5.59
 }
 
 
 # Install mysql from source
 # Add for VIOLET project
-#install_mysql
 install_mysql_8() {
  sudo apt-get -y install cmake vim libssl-dev pkg-config libncurses-dev zlib1g-dev  libreadline-gplv2-dev
+ if [ ! -d mysql_configuration ]; then
+   git clone https://github.com/gongxini/mysql_configuration.git
+ fi
  wget -nc https://downloads.mysql.com/archives/mysql-8.0/mysql-8.0.16.tar.gz 
- git clone https://github.com/gongxini/mysql_configuration.git
  tar -zxvf mysql-8.0.16.tar.gz
  rm -rf 8.0.16/
  mv mysql-8.0.16 8.0.16
  cd ./8.0.16
  mkdir ./build
  cd ./build
- mkdir /home/s2e/software
- mkdir /home/s2e/software/mysql
  mkdir -p /home/s2e/software/mysql/8.0.16/data
  sleep 2
   cmake .. -DCMAKE_INSTALL_PREFIX=/home/s2e/software/mysql/8.0.16 -DMYSQL_DATADIR=/home/s2e/software/mysql/8.0.16/data -DSYSCONFDIR=/home/s2e/software/mysql/8.0.16/etc  -DDOWNLOAD_BOOST=1 -DWITH_BOOST=../boost
@@ -281,6 +291,8 @@ install_mysql_8() {
 EOF
  ./bin/mysqladmin -S mysqld.sock -u root shutdown
  cd /home/s2e
+ # Delete source and build directory to save space
+ rm -rf 8.0.16/
 }
 
 # Install kernels last, the cause downgrade of libc,
