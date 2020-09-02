@@ -381,9 +381,9 @@ sudo apt-get update
 install_postgresql
 install_mysql
 install_i386
-install_apache 
+# install_apache 
 #install_systemtap
-install_squid
+# install_squid
 # Install CGC tools if we have a CGC kernel
 if [ $(has_cgc_kernel) -eq 1 ]; then
     install_apt_packages
